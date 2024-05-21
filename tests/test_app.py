@@ -17,26 +17,26 @@ class TestApp(TestCase):
         return app
 
     def test_consulta_fatura(self):
-        response = self.client.get('/fatura/consulta_fatura/3')
+        response = self.client.get('src/fatura/consulta_fatura/3')
         self.assertEqual(response.status_code, 200)
 
     def test_consulta_todas_faturas(self):
-        response = self.client.get('/fatura/consulta_all/')
+        response = self.client.get('src/fatura/consulta_all/')
         self.assertEqual(response.status_code, 200)
 
 
     def test_update_fatura_pago(self):
-        response = self.client.put('/fatura/atualiza_fatura_pago/3')
+        response = self.client.put('src/fatura/atualiza_fatura_pago/3')
         self.assertEqual(response.status_code, 200)
     
     
     def test_update_fatura_nao_pago(self):
-        response = self.client.put('/fatura/atualiza_fatura_nao_pago/3')
+        response = self.client.put('src/fatura/atualiza_fatura_nao_pago/3')
         self.assertEqual(response.status_code, 200)
 
 
     def test_update_fatura_cancelado(self):
-        response = self.client.put('/fatura/atualiza_fatura_cancelado/3')
+        response = self.client.put('src/fatura/atualiza_fatura_cancelado/3')
         self.assertEqual(response.status_code, 200)
 
 if __name__ == '__main__':
