@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-      MYSQL_USER: ${{ secrets.MYSQL_USER }}
+      MONGO_DB: ${{ secrets.MONGO_DB }}
+      MONGO_SENHA: ${{ secrets.MONGO_SENHA }}
+      MONGO_USER: ${{ secrets.MONGO_USER }}
 
     steps:
       - uses: actions/checkout@v2
