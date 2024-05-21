@@ -2,6 +2,8 @@ import pytest
 from flask_testing import TestCase
 import sys,os
 # Adiciona o diretório raiz ao caminho do sistema
+sys.path.insert(0, os.path.abspath('/home/runner/.local/lib/python3.10/site-packages')) 
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import app
