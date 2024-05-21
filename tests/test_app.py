@@ -7,7 +7,7 @@ from flask_testing import TestCase
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app import app
+from src.app import app
 
 class TestApp(TestCase):
     def create_app(self):
