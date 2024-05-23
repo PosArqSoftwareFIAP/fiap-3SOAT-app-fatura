@@ -21,6 +21,7 @@ def check(list):
 def create_fatura():
     try:
         data = request.json
+        print(data,file=sys.stderr)
         db_objt = db_mongo_class()
         collection = db_objt.get_collection()
         maior_id = list(collection.find().sort('id_fatura', -1).limit(1))[0]['id_fatura']
@@ -34,6 +35,7 @@ def create_fatura():
         collection.insert_one(fatura)
         return jsonify({"message": "Fatura criado com sucesso"}), 201
     except Exception as e:
+        print(e,file=sys.stderr)
         return jsonify({"error": str(e)}), 400
 
 
