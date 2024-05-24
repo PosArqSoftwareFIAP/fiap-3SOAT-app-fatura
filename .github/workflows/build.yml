@@ -91,4 +91,4 @@ jobs:
           destination_branch: "main"
           pr_title: "Merge Develop into Main"
           pr_body: "Automated PR to merge `develop` changes into `main`."
-          github_token: ${{ secrets.GITHUB_TOKEN }
+          github_token: ${{ secrets.GITHUB_TOKEN }}
