@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify,request
 import sys
-from db import db_mongo_class
+from src.db import db_mongo_class
 from datetime import datetime
 from bson.json_util import dumps, loads
 
