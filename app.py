@@ -3,10 +3,10 @@ import mysql.connector
 import os
 import sys
 
-from fatura import fatura_bp
+from src.fatura import fatura_bp
 
 from functools import wraps
-from db import db_mysql_class
+from src.db import db_mysql_class
 
 
 
