@@ -40,14 +40,42 @@ jobs:
       - name: Install tox and any other packages
         run: pip install tox
         
-      - name: Run tox
-        run: tox -e py
+
+
+        
+      # - name: Run tox
+      #   run: tox -e py
+      # - name: SonarCloud Scan
+      #   uses: SonarSource/sonarcloud-github-action@master
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+
+      - name: Run coverage
+        env:
+          MONGO_DB: fiap-food
+          MONGO_SENHA: 1X4y906fZUQ7Ad83
+          MONGO_USER: doadmin
+        run: |
+          pip install pytest-cov
+          python3 -m coverage run -m unittest discover -s tests
+          python3 -m coverage xml -o coverage.xml
+
+
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        # with:
+        #   args: >
+        #     -Dsonar.projectKey=posarqsoftwarefiap
+        #     -Dsonar.organization=PosArqSoftwareFIAP
+        #     -Dsonar.sources=./entregador
+        #     -Dsonar.tests=./tests
+# projectBaseDir: ./path/to/your/project  # Opcional: ajuste para o diretório base do seu projeto, se não for o root
+# -Dsonar.java.binaries=./build/classes
 
   createPullRequest:
     needs: sonarcloud
@@ -63,4 +91,4 @@ jobs:
           destination_branch: "main"
           pr_title: "Merge Develop into Main"
           pr_body: "Automated PR to merge `develop` changes into `main`."
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }
