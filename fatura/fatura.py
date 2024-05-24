@@ -16,8 +16,8 @@ def check(list):
 
 
 
-# Rota para criar uma nova fatura
-@fatura_bp.route('/fatura/cria_fatura', methods=['GET','POST'])
+
+@fatura_bp.route('/fatura/cria_fatura/', methods=['GET','POST'])
 def create_fatura():
     try:
         data = request.json
