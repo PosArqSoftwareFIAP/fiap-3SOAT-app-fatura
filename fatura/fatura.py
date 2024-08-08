@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify,request
 import sys
-from db import db_mongo_class
+from db import db_mysql_class
 from datetime import datetime
 from bson.json_util import dumps, loads
 
@@ -19,24 +19,24 @@ def check(list):
 
 @fatura_bp.route('/fatura/cria_fatura/', methods=['GET','POST'])
 def create_fatura():
+    db_objt = db_mysql_class()
+    conn = db_objt.get_db_connection()
+    cursor = conn.cursor()
+    current_datetime = datetime.now()
+
     try:
         data = request.json
-        print(data,file=sys.stderr)
-        db_objt = db_mongo_class()
-        collection = db_objt.get_collection()
-        maior_id = list(collection.find().sort('id_fatura', -1).limit(1))[0]['id_fatura']
-        print(maior_id,file=sys.stderr)
-
-        next_id = maior_id + 1
-        
-        current_datetime = datetime.now()
-        
-        fatura = {"id_fatura":next_id, "id_pedido":data['id_pedido'], "id_cliente":data.get('id_cliente'), "valor":data.get('valor'), "status":data.get('status'), "data_fatura":current_datetime}
-        collection.insert_one(fatura)
+        query = "INSERT INTO fatura (id_pedido, id_cliente, valor, status, data_fatura) VALUES (%s, %s, %s, %s, %s)"
+        values = (data['id_pedido'], data.get('id_cliente'), data.get('valor'), data.get('status'),current_datetime)
+        cursor.execute(query, values)
+        conn.commit()
         return jsonify({"message": "Fatura criado com sucesso"}), 201
     except Exception as e:
-        print(e,file=sys.stderr)
         return jsonify({"error": str(e)}), 400
+    finally:
+        cursor.close()
+        conn.close()
+
 
 
 
@@ -44,81 +44,120 @@ def create_fatura():
 # Rota para recuperar a fatura
 @fatura_bp.route('/fatura/consulta_fatura/<int:id>', methods=['GET'])
 def get_fatura(id):
+    db_objt = db_mysql_class()
+    conn = db_objt.get_db_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        db_objt = db_mongo_class()
-        collection = db_objt.get_collection()
-        fatura = collection.find_one({"id_fatura": id})
+        query = "SELECT * FROM fatura WHERE id_fatura = %s"
+        cursor.execute(query, (id,))
+        fatura = cursor.fetchone()
         if fatura:
-            return dumps(fatura), 200
+            return jsonify(fatura), 200
         else:
             return jsonify({"message": "fatura não encontrada"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
+    finally:
+        cursor.close()
+        conn.close()
 
 
 # Rota para atualizar um fatura pelo ID
 @fatura_bp.route('/fatura/atualiza_fatura/<int:id>', methods=['PUT'])
 def update_fatura_status(id):
+    db_objt = db_mysql_class()
+    conn = db_objt.get_db_connection()
+    cursor = conn.cursor()
     try:
         data = request.json
-        db_objt = db_mongo_class()
-        collection = db_objt.get_collection()
-        collection.update_one({"id_fatura": id}, {"$set": {"status": data.get('status')}})
+        query = "UPDATE fatura SET status = %s  WHERE id_fatura = %s"
+        values = (data.get('status'), id)
+        cursor.execute(query, values)
+        conn.commit()
         return jsonify({"message": "Fatura atualizada com sucesso"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @fatura_bp.route('/fatura/atualiza_fatura_pago/<int:id>', methods=['PUT'])
 def update_fatura_status_pago(id):
+    db_objt = db_mysql_class()
+    conn = db_objt.get_db_connection()
+    cursor = conn.cursor()
     try:
-        db_objt = db_mongo_class()
-        collection = db_objt.get_collection()
-        collection.update_one({"id_fatura": id}, {"$set": {"status": 2}})
-
+        # data = request.json
+        query = "UPDATE fatura SET status = 2  WHERE id_fatura = %s"
+        values = (id,)
+        cursor.execute(query, values)
+        conn.commit()
         return jsonify({"message": "Fatura atualizada com sucesso"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @fatura_bp.route('/fatura/atualiza_fatura_nao_pago/<int:id>', methods=['PUT'])
 def update_fatura_status_nao_pago(id):
+    db_objt = db_mysql_class()
+    conn = db_objt.get_db_connection()
+    cursor = conn.cursor()
     try:
-        db_objt = db_mongo_class()
-        collection = db_objt.get_collection()
-        collection.update_one({"id_fatura": id}, {"$set": {"status": 1}})
-
+        # data = request.json
+        query = "UPDATE fatura SET status = 1 WHERE id_fatura = %s"
+        values = (id,)
+        cursor.execute(query, values)
+        conn.commit()
         return jsonify({"message": "Fatura atualizada com sucesso"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    finally:
+        cursor.close()
+        conn.close()
+
 
 
 @fatura_bp.route('/fatura/atualiza_fatura_cancelado/<int:id>', methods=['PUT'])
 def update_fatura_status_cancelado(id):
+    db_objt = db_mysql_class()
+    conn = db_objt.get_db_connection()
+    cursor = conn.cursor()
     try:
-        db_objt = db_mongo_class()
-        collection = db_objt.get_collection()
-        collection.update_one({"id_fatura": id}, {"$set": {"status": 3}})
-
+        # data = request.json
+        query = "UPDATE fatura SET status = 3  WHERE id_fatura = %s"
+        values = (id,)
+        cursor.execute(query, values)
+        conn.commit()
         return jsonify({"message": "Fatura cancelada com sucesso"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
+    finally:
+        cursor.close()
+        conn.close()
 
 
 
 # Rota para recuperar todx consulta_all_fatura
 @fatura_bp.route('/fatura/consulta_all/', methods=['GET'])
 def consulta_all_fatura():
+    db_objt = db_mysql_class()
+    conn = db_objt.get_db_connection()
+    cursor = conn.cursor(dictionary=True)
     try:
-        db_objt = db_mongo_class()
-        collection = db_objt.get_collection()
-        faturas = list(collection.find())
-        return dumps(faturas),200
+        query = "SELECT * FROM fatura"
+        cursor.execute(query)
+        fatura = cursor.fetchall()
+        if fatura:
+            return jsonify(fatura), 200
+        else:
+            return jsonify({"message": "fatura não encontrada"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
+    finally:
+        cursor.close()
+        conn.close()
 
